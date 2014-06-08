@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" /> 
+<title>SimpleAnimation.js</title>
+<script src="SimpleAnimation"></script>
+<style>
+body {
+background: #EFEFEF;
+margin: 10px 0;
+padding: 0;
+font-family: Helvetica, Meiryo, メイリオ, sans-serif;
+line-height: 1.6;
+height: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 { font-weight: normal; }
+
+#container {
+background: #FFF;
+margin-left: 200px;
+padding: 10px 30px;
+max-width: 800px;
+border-radius: 10px;
+}
+.wrap-code {
+background: #333;
+margin-bottom: 40px;
+padding: 20px 30px; 
+color: #FFF;
+border-radius: 10px;
+}
+code { white-space: pre; }
+th,td { padding: 5px; }
+.obj {
+position: relative;
+background: #000;
+width: 30px; height: 30px;
+border-radius: 100%;
+}
+button {
+margin: 10px 0;
+display: inline-block;
+background: linear-gradient(to bottom,  #499bea 0%,#207ce5 100%);
+padding: 8px 16px;
+text-align: center;
+color: #FFF;
+border: 0;
+border-radius: 6px;
+box-shadow: none;
+}
+</style>
+</head>
+<body>
+
+<div id="container">
+
+<h1>SimpleAnimation.js</h1>
+<section>
+    <h2>二点間移動</h2>
+    <div id="move" class="obj"></div>
+    <button id="movestart">start</button>
+<script>
+var moveTimer = 0;
+var moveObj = document.querySelector('#move');
+var a = new SimpleAnimation({
+    pass:{
+        startx : 0, starty : 0,
+        endx : 200, endy : 10,
+    },
+    speed : 3, friction: 0, callback : moveEnd
+});
+document.querySelector('#movestart').addEventListener('click', function() {
+    moveTimer = setInterval(function(){
+        var point = a.movePoint();//point = current position
+        moveObj.style.left = point.x + 'px';
+        moveObj.style.top = point.y + 'px';
+    }, 33);
+});
+function moveEnd() {
+    clearInterval(moveTimer);
+    console.log('end');
+    setTimeout(function() {
+        moveObj.style.left = 0;
+        moveObj.style.top = 0;
+    }, 100);
+};
+</script>
+
+<p class="wrap-code"><code>var a = new SimpleAnimation({
+    pass:{
+        startx : 0, starty : 0,
+        endx : 200, endy : 10,
+    },
+    speed : 3, friction: 0, callback : moveEnd
+});</code></p>
+</section>
+
+<section>
+    <h2>曲線移動</h2>
+    <div id="bezier" class="obj"></div>
+    <button id="bezierstart">start</button>
+
+<script>
+var bezierTimer = 0;
+var bezierObj = document.querySelector('#bezier');
+var b = new SimpleAnimation({
+    pass:{
+        startx : 0, starty : 0,
+        p1x : 100, p1y : -100,
+        p2x : 150, p2y : 100,
+        endx : 200, endy : 0
+    },
+    speed : 0.02, callback : moveBezier
+});
+document.querySelector('#bezierstart').addEventListener('click', function() {
+    bezierTimer = setInterval(function(){
+        var bezPoint = b.bezier();
+        bezierObj.style.left = bezPoint.x + 'px';
+        bezierObj.style.top = bezPoint.y + 'px';
+    }, 33);
+});
+function moveBezier() {
+    clearInterval(bezierTimer);
+    console.log('end');
+    setTimeout(function() {
+        bezierObj.style.left = 0;
+        bezierObj.style.top = 0;
+    }, 100);
+};
+</script>
+<p class="wrap-code"><code>var b = new SimpleAnimation({
+    pass:{
+        startx : 0, starty : 0,
+        p1x : 100, p1y : -100,
+        p2x : 150, p2y : 100,
+        endx : 200, endy : 0
+    },
+    speed : 0.02, callback : moveBezier
+});</code></p>
+</section>
+
+<section>
+    <h2>スプライト</h2>
+    <div id="sprite" style="width:100px;height:100px;background:url(sprite.png) 0 0 no-repeat;"></div>
+    <strong>表示する画像のインデックス</strong>
+        <select id="spriteindex">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2" selected="">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+    </select>
+    <button id="spriteshow">show</button>
+    <button id="spritestart" value="start">start</button>
+    <figure>
+        <figcaption>スプライト画像</figcaption>
+        <img src="sprite.png" alt="スプライト画像">
+    </figure>
+
+<script>
+var spriteTimer = 0;
+var spriteObj = document.querySelector('#sprite');
+var spriteCounter = 0;
+document.querySelector('#spriteshow').addEventListener('click', function() {
+    var spriteVal = document.querySelector('#spriteindex').value;
+    sprite.set({
+        spriteIndex : spriteVal
+    });
+    var index = sprite.sprite();
+    spriteObj.style.backgroundPosition = '-' + index.x + 'px ' + '-' + index.y + 'px';
+});
+
+document.querySelector('#spritestart').addEventListener("click", function() {
+    if(this.value !== 'stop'){
+        this.value = 'stop';
+        this.innerHTML = 'stop';
+        spriteTimer = setInterval(spriteAnimation, 100);
+    } else {
+        this.value = 'start';
+        this.innerHTML = 'start';
+        clearInterval(spriteTimer);
+    }
+
+    function spriteAnimation() {
+        var index = sprite.sprite();
+        if(spriteCounter < index.max) {
+            sprite.set( {spriteIndex: Number(spriteCounter)} );
+            var index = sprite.sprite();
+            spriteObj.style.backgroundPosition = '-' + index.x + 'px ' + '-' + index.y + 'px';
+            spriteCounter += 1;
+        }else {
+            spriteCounter = 0;
+        }
+    };
+});
+
+var sprite = new SimpleAnimation({
+    sprite:{
+        width : 300,
+        height : 300,
+        peekWidth : 300 / 3,
+        peekHeight : 300 / 3
+    }
+});
+
+var position = sprite.sprite();//index = sprite position<
+</script>
+<p class="wrap-code"><code>var sprite = new SimpleAnimation({
+    sprite:{
+        width : 300,
+        height : 300,
+        peekWidth : 300 / 3,
+        peekHeight : 300 / 3
+    }
+});</code></p>
+</section>
+
+</div>
+</body>
+</html>
