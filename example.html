@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" /> 
 <title>SimpleAnimation.js</title>
-<script src="SimpleAnimation"></script>
+<script src="SimpleAnimation.js"></script>
 <style>
 body {
 background: #EFEFEF;
@@ -64,7 +64,7 @@ box-shadow: none;
 var moveTimer = 0;
 var moveObj = document.querySelector('#move');
 var a = new SimpleAnimation({
-    pass:{
+    path:{
         startx : 0, starty : 0,
         endx : 200, endy : 10,
     },
@@ -88,7 +88,7 @@ function moveEnd() {
 </script>
 
 <p class="wrap-code"><code>var a = new SimpleAnimation({
-    pass:{
+    path:{
         startx : 0, starty : 0,
         endx : 200, endy : 10,
     },
@@ -105,7 +105,7 @@ function moveEnd() {
 var bezierTimer = 0;
 var bezierObj = document.querySelector('#bezier');
 var b = new SimpleAnimation({
-    pass:{
+    path:{
         startx : 0, starty : 0,
         p1x : 100, p1y : -100,
         p2x : 150, p2y : 100,
@@ -130,7 +130,7 @@ function moveBezier() {
 };
 </script>
 <p class="wrap-code"><code>var b = new SimpleAnimation({
-    pass:{
+    path:{
         startx : 0, starty : 0,
         p1x : 100, p1y : -100,
         p2x : 150, p2y : 100,
