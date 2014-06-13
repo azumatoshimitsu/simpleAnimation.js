@@ -23,6 +23,7 @@ var SimpleAnimation = function(arg) {
 		spriteObj.col = spriteObj.height / spriteObj.peekHeight;
 		spriteObj.maxIndex = spriteObj.row * spriteObj.col;
 		spriteObj.position = {x:0, y:0, max:0};
+	var t = 0;
              
 	//*******************
 	//公開メソッド
@@ -101,6 +102,14 @@ var SimpleAnimation = function(arg) {
 				count = 0;
 				callback();
 			}
+			return point;
+		},
+		//------------------
+		//放物線移動
+		parabola : function () {
+			t += 1;
+			point.x = speed * Math.cos(30) * t;
+			point.y = (speed * Math.sin(30) * t) - (Math.pow(9.6 * t, 2) / 2);
 			return point;
 		},
 		//------------------

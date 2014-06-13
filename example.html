@@ -141,6 +141,31 @@ function moveBezier() {
 </section>
 
 <section>
+    <h2>円移動</h2>
+    <div id="parabola" class="obj"></div>
+    <button id="parabolastart">start</button>
+<script>
+var parabolaTimer = 0;
+var parabolaObj = document.querySelector('#parabola');
+var c = new SimpleAnimation({
+    path:{
+        startx : 0, starty : 0,
+        endx : 200, endy : 0
+    },
+    speed : 0.1
+});
+document.querySelector('#parabolastart').addEventListener('click', function() {
+    parabolaTimer = setInterval(function(){
+        var point = c.parabola();
+        parabolaObj.style.left = point.x + 'px';
+        parabolaObj.style.top = point.y + 'px';
+    }, 33);
+});
+</script>
+
+</section>
+
+<section>
     <h2>スプライト</h2>
     <div id="sprite" style="width:100px;height:100px;background:url(sprite.png) 0 0 no-repeat;"></div>
     <strong>表示する画像のインデックス</strong>
