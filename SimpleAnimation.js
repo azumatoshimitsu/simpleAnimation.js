@@ -12,7 +12,7 @@ var SimpleAnimation = function(arg) {
 	var speed     = arg.speed || 5;//速度
 	var friction  = arg.friction || 0;//摩擦
 	var point     = (path.startx && path.starty) ? { x:path.startx, y:path.starty } : { x:0, y:0 };//戻り値の座標軸
-	var callback  = arg.callback || undefined;//コールバック関数
+	var callback  = arg.callback || function(){};//コールバック関数
 	var count     = 0;
 	var spriteObj = arg.sprite || 0;
 		spriteObj = (spriteObj.width && spriteObj.height && spriteObj.peekWidth && spriteObj.peekHeight ) ? 
@@ -23,7 +23,8 @@ var SimpleAnimation = function(arg) {
 		spriteObj.col = spriteObj.height / spriteObj.peekHeight;
 		spriteObj.maxIndex = spriteObj.row * spriteObj.col;
 		spriteObj.position = {x:0, y:0, max:0};
-	var t = 0;
+	var rad       = arg.rad || 180;
+	var vertical  = arg.vertical || 100;
              
 	//*******************
 	//公開メソッド
@@ -39,31 +40,18 @@ var SimpleAnimation = function(arg) {
 			point     = (setarg.start) ? { x:path.startx,y:path.starty } : point;
 			callback  = (setarg.callback) ? setarg.callback : callback;
 			spriteObj.index = (setarg.spriteIndex) ? setarg.spriteIndex : spriteObj.index;
+			rad       = (setarg.rad) ? setarg.rad : rad;
 		},
-		//------------------
-		//フィールドゲット
 		get : function() {
-			var obj = {
-				flg       : flg,
-				roopcount : roopcount,
-				path      : path,
-				speed     : speed,
-				friction  : friction,
-				point     : point,
-				width     : width,
-				height    : height,
-				callback  : callback,
-				spriteObj : spriteObj
-			};
-			return obj;
+			return rad;
 		},
 		//------------------
 		//2地点間の移動
-		movePoint : function () {//開始,終了,摩擦,コールバック
+		movePoint : function () {//開始,終了,摩擦
 			 //距離を計算
 			var dx = path.endx - path.startx;
 			var dy = path.endy - path.starty;
-			var distance = Math.sqrt((dx*dx + dy*dy));
+			var distance = Math.sqrt((dx * dx + dy * dy));
 			var step = Math.floor(distance / speed);
 			//ステップ数を繰り返す階数に代入
 			if(flg) {
@@ -84,7 +72,7 @@ var SimpleAnimation = function(arg) {
 		},
 		//------------------
 		//ベジェ移動
-		bezier : function () {//開始,終了,コールバック
+		bezier : function () {//開始,終了
 			var t  = count;
 			var cx = 3 * (path.p1x - path.startx);
 			var bx = 3 * (path.p2x - path.p1x) - cx;
@@ -105,16 +93,21 @@ var SimpleAnimation = function(arg) {
 			return point;
 		},
 		//------------------
-		//放物線移動
-		parabola : function () {
-			t += 1;
-			point.x = speed * Math.cos(30) * t;
-			point.y = (speed * Math.sin(30) * t) - (Math.pow(9.6 * t, 2) / 2);
+		//カーブ移動
+		curve : function () {//開始,終了,移動の高さ
+			var step = (path.endx - path.startx) / (180 / speed);
+			if( rad < 359 ) {
+				rad += speed;
+				point.x += step;
+				point.y = Math.sin( rad * Math.PI / 180) * vertical + (path.starty / 2);
+			} else {
+				callback();
+			}
 			return point;
 		},
 		//------------------
 		//スプライト
-		sprite : function () {//画像のインデックス,画像の幅,画像の高さ,切抜の幅,切抜の高さ}
+		sprite : function () {//画像のインデックス,画像の幅,画像の高さ,切抜の幅,切抜の高さ
 			spriteObj.x = (spriteObj.index % spriteObj.row) * spriteObj.peekWidth;
 			spriteObj.y = Math.floor(spriteObj.index / spriteObj.col) * spriteObj.peekHeight;
 			spriteObj.position = {x:spriteObj.x, y:spriteObj.y, max:spriteObj.maxIndex};

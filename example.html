@@ -5,50 +5,14 @@
 <title>SimpleAnimation.js</title>
 <script src="SimpleAnimation.js"></script>
 <style>
-body {
-background: #EFEFEF;
-margin: 10px 0;
-padding: 0;
-font-family: Helvetica, Meiryo, メイリオ, sans-serif;
-line-height: 1.6;
-height: 100%;
-}
-
+body { background: #EFEFEF; margin: 10px 0; padding: 0; font-family: Helvetica, Meiryo, メイリオ, sans-serif; line-height: 1.6; height: 100%; }
 h1, h2, h3, h4, h5, h6 { font-weight: normal; }
-
-#container {
-background: #FFF;
-margin-left: 200px;
-padding: 10px 30px;
-max-width: 800px;
-border-radius: 10px;
-}
-.wrap-code {
-background: #333;
-margin-bottom: 40px;
-padding: 20px 30px; 
-color: #FFF;
-border-radius: 10px;
-}
-code { white-space: pre; }
-th,td { padding: 5px; }
-.obj {
-position: relative;
-background: #000;
-width: 30px; height: 30px;
-border-radius: 100%;
-}
+#container {background: #FFF; margin-left: 200px; padding: 10px 30px; max-width: 800px; border-radius: 10px;}
+.wrap-code {; background: #333; margin-bottom: 40px; padding: 20px 30px;; color: #FFF; border-radius: 10px; }
+code { white-space: pre; } th,td { padding: 5px; }
+.obj { position: relative; background: #000; width: 30px; height: 30px; border-radius: 100%; }
 button {
-margin: 10px 0;
-display: inline-block;
-background: linear-gradient(to bottom,  #499bea 0%,#207ce5 100%);
-padding: 8px 16px;
-text-align: center;
-color: #FFF;
-border: 0;
-border-radius: 6px;
-box-shadow: none;
-}
+margin: 10px 0; display: inline-block; background: linear-gradient(to bottom,  #499bea 0%,#207ce5 100%); padding: 8px 16px; text-align: center; color: #FFF; border: 0; border-radius: 6px; box-shadow: none; }
 </style>
 </head>
 <body>
@@ -63,14 +27,14 @@ box-shadow: none;
 <script>
 var moveTimer = 0;
 var moveObj = document.querySelector('#move');
-var a = new SimpleAnimation({
-    path:{
-        startx : 0, starty : 0,
-        endx : 200, endy : 10,
-    },
-    speed : 3, friction: 0, callback : moveEnd
-});
 document.querySelector('#movestart').addEventListener('click', function() {
+    var a = new SimpleAnimation({
+        path:{
+            startx : 0, starty : 0,
+            endx : 200, endy : 10,
+        },
+        speed : 6, friction: 0, callback : moveEnd
+    });
     moveTimer = setInterval(function(){
         var point = a.movePoint();//point = current position
         moveObj.style.left = point.x + 'px';
@@ -80,10 +44,6 @@ document.querySelector('#movestart').addEventListener('click', function() {
 function moveEnd() {
     clearInterval(moveTimer);
     console.log('end');
-    setTimeout(function() {
-        moveObj.style.left = 0;
-        moveObj.style.top = 0;
-    }, 100);
 };
 </script>
 
@@ -97,7 +57,7 @@ function moveEnd() {
 </section>
 
 <section>
-    <h2>曲線移動</h2>
+    <h2>ベジェ曲線移動</h2>
     <div id="bezier" class="obj"></div>
     <button id="bezierstart">start</button>
 
@@ -141,27 +101,45 @@ function moveBezier() {
 </section>
 
 <section>
-    <h2>円移動</h2>
-    <div id="parabola" class="obj"></div>
-    <button id="parabolastart">start</button>
+    <h2>カーブ移動</h2>
+    <div id="curve" class="obj"></div>
+    <button id="curvestart">start</button>
 <script>
-var parabolaTimer = 0;
-var parabolaObj = document.querySelector('#parabola');
-var c = new SimpleAnimation({
-    path:{
-        startx : 0, starty : 0,
-        endx : 200, endy : 0
-    },
-    speed : 0.1
-});
-document.querySelector('#parabolastart').addEventListener('click', function() {
-    parabolaTimer = setInterval(function(){
-        var point = c.parabola();
-        parabolaObj.style.left = point.x + 'px';
-        parabolaObj.style.top = point.y + 'px';
+var curveTimer = 0;
+var curveObj = document.querySelector('#curve');
+
+document.querySelector('#curvestart').addEventListener('click', function() {
+    var c = new SimpleAnimation({
+        path:{
+            startx : 0, starty : 0,
+            endx : 500, endy : 0
+        },
+        vertical : 100,
+        speed : 6,
+        callback : moveCurve
+    });
+    curveTimer = setInterval(function(){
+        var point = c.curve();
+        curveObj.style.left = point.x + 'px';
+        curveObj.style.top = point.y + 'px';
+        console.log('y', point.y, 'x', point.x, 'rad', c.get('rad'));
     }, 33);
 });
+
+function moveCurve() {
+    clearInterval(curveTimer);
+    console.log('end');
+};
 </script>
+<p class="wrap-code"><code>var c = new SimpleAnimation({
+    path:{
+        startx : 0, starty : 0,
+        endx : 500, endy : 0
+    },
+    vertical : 100,
+    speed : 6,
+    callback : moveCurve
+});</code></p>
 
 </section>
 
