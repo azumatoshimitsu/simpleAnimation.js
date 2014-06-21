@@ -83,10 +83,6 @@ document.querySelector('#bezierstart').addEventListener('click', function() {
 function moveBezier() {
     clearInterval(bezierTimer);
     console.log('end');
-    setTimeout(function() {
-        bezierObj.style.left = 0;
-        bezierObj.style.top = 0;
-    }, 100);
 };
 </script>
 <p class="wrap-code"><code>var b = new SimpleAnimation({
